@@ -32,13 +32,11 @@ const props = defineProps({
 
 })
 function toggleKey(key, value) {
-  console.log(key)
+
   piano.toggleKey(key, value)
 }
 //const dial = ref(null)
 onMounted(async () => {
-  //console.log(Dial)
-  console.log(props.size)
 
   piano = new Nexus.Piano("#wrapper", {
     lowNote: props.lowNote,

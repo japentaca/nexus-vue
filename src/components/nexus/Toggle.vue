@@ -2,7 +2,6 @@
 
 <template>
   <div id="wrapper">
-
   </div>
 </template>
 
@@ -11,12 +10,9 @@ import Nexus from 'nexusui'
 import { onMounted, defineProps, defineEmits, nextTick } from 'vue'
 
 const emits = defineEmits(["change"])
-let button
+let toggle
 const props = defineProps({
-  mode: {
-    type: String, //  "button", "aftertouch", "impulse", or "toggle"
-    default: "button"
-  },
+
   state: {
     type: Boolean,
     default: false
@@ -28,32 +24,30 @@ const props = defineProps({
   }
 
 })
-function turnOff() {
-  button.turnOff()
+function flip() {
+  toggle.turnOff()
 }
 function turnOn() {
-  button.turnOn()
+  toggle.turnOn()
 }
 //const dial = ref(null)
 onMounted(async () => {
 
-  button = new Nexus.Button("#wrapper", {
+
+  toggle = new Nexus.Toggle("#wrapper", {
     state: props.state,
-    mode: props.mode,
     size: props.size,
-    mode: props.mode
 
   })
 
-  button.resize(props.size[0], props.size[1])
+  toggle.resize(props.size[0], props.size[1])
   await nextTick()
-  button.value = props.value
-  button.on("change", (value) => {
+  toggle.value = props.value
+  toggle.on("change", (value) => {
     emits("change", value)
   })
 })
 defineExpose({
-  turnOff,
-  turnOn
+  flip
 })
 </script>

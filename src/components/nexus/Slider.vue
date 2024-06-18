@@ -9,6 +9,7 @@
 <script setup>
 import Nexus from 'nexusui'
 import { onMounted, defineProps, defineEmits, nextTick } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
 
 const emits = defineEmits(["change"])
 
@@ -42,10 +43,9 @@ const props = defineProps({
 })
 //const dial = ref(null)
 onMounted(async () => {
-  //console.log(Dial)
-  console.log(props.size)
 
-  let slider = new Nexus.Slider("#wrapper", {
+
+  let component = new Nexus.Slider("#wrapper", {
     size: props.size,
 
     min: props.min,
@@ -56,11 +56,15 @@ onMounted(async () => {
 
   })
 
-  slider.resize(props.size[0], props.size[1])
+  component.resize(props.size[0], props.size[1])
   await nextTick()
-  slider.value = props.value
-  slider.on("change", (value) => {
-    emits("change", value)
+  component.value = props.value
+  component.on("change", (value) => {
+    debouncedFn()
   })
+  const debouncedFn = useDebounceFn(() => {
+    //console.log("change", dial.value)
+    emits("change", component.value)
+  }, 50)
 })
 </script>

@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vueuse/core": "^10.11.0",
     "nexusui": "^2.1.6",
     "vue": "^3.4.21"
   },

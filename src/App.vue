@@ -1,20 +1,19 @@
-<script setup>
-
-</script>
-
 <template>
-
-  <Button @change="onChange" mode="toggle" :size="button_size" />
-
-  <!--
- <Multislider @change="onChange" :values="multiSlider_values" :numberOfSliders="5" :size="multislider_size" />
-<Piano ref="piano" @change="onChange" :size="piano_size" />
-  <Slider @change="onChange" :size="Slider_size" />
-
-  <Dial @change="onChange" :size="dial_size" />
--->
+  <div class="wrapper">
+    <div class="sevensegment">
+      {{ lahora }}
 
 
+      <Toggle @change="onChange" :size="button_size" />
+
+      <Button @change="onChange" mode="toggle" :size="button_size" />
+      <Multislider @change="onChange" :values="multiSlider_values" :numberOfSliders="5" :size="multislider_size" />
+      <Piano ref="piano" lowNote="24" highNote="96" @change="onChange" :size="piano_size" />
+      <Slider @change="onChange" :size="slider_size" />
+      <Dial @change="onChange" value="50" :size="dial_size" />
+
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -24,14 +23,29 @@ import Dial from "./components/nexus/Dial.vue"
 import Slider from "./components/nexus/Slider.vue"
 import Multislider from "./components/nexus/Multislider.vue"
 import Piano from "./components/nexus/Piano.vue"
-import Button from "./components/nexus/Button.vue"  
+import Button from "./components/nexus/Button.vue"
+import Toggle from "./components/nexus/Toggle.vue"
+
+
+const lahora = ref(0)
+setInterval(() => {
+  lahora.value = new Date().toLocaleTimeString()
+}, 1000)
+const sd = ref(null)
+
+
+//segmentDisplay.pattern="########"
+//segmentDisplay.segmentCount= 16
+
+
+
 let piano_size = [600, 100]
 let dial_size = [200, 200]
-let button_size = [160, 160]
-let slider_size = [30, 10]
+let button_size = [30, 30]
+let slider_size = [100, 30]
 let multislider_size = [280, 130]
-let multiSlider_values=[10,20,30,40,50]
-const piano=ref(null)
+let multiSlider_values = [10, 20, 30, 40, 50]
+const piano = ref(null)
 
 
 const onChange = (value) => {
@@ -41,18 +55,25 @@ const onChange = (value) => {
 </script>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+@import url('https://fonts.cdnfonts.com/css/seven-segment');
+
+
+.wrapper {
+
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(132, 132, 132);
+  display: flex;
+
+
+
+
 }
 
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.sevensegment {
+  font-family: 'Seven Segment';
+  font-size: 50px;
+  color: rgb(0, 149, 162);
+  background-color: rgb(154, 154, 154);
 }
 </style>
