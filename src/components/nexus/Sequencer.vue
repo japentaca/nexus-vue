@@ -37,16 +37,22 @@
     })
 
     await nextTick()
-    component.resize(props.size[0], props.size[1])
+    // Verificar si el componente tiene el método resize antes de llamarlo
+    if (component.resize && typeof component.resize === 'function') {
+      component.resize(props.size[0], props.size[1])
+    }
     await nextTick()
 
-    component.on("change", (value) => {
-      debouncedChange(value)
-    })
+    // Verificar si el componente tiene el método on antes de llamarlo
+    if (component.on && typeof component.on === 'function') {
+      component.on("change", (value) => {
+        debouncedChange(value)
+      })
 
-    component.on("step", (value) => {
-      debouncedStep(value)
-    })
+      component.on("step", (value) => {
+        debouncedStep(value)
+      })
+    }
 
     const debouncedChange = useDebounceFn((value) => {
       emits("change", value)

@@ -58,14 +58,20 @@ onMounted(async () => {
 
   })
   await nextTick()
-  component.resize(props.size[0], props.size[1])
+  // Verificar si el componente tiene el método resize antes de llamarlo
+  if (component.resize && typeof component.resize === 'function') {
+    component.resize(props.size[0], props.size[1])
+  }
   await nextTick()
 
   component.setAllSliders(props.values)
-  component.on("change", (value) => {
+  // Verificar si el componente tiene el método on antes de llamarlo
+  if (component.on && typeof component.on === 'function') {
+    component.on("change", (value) => {
 
-    debouncedFn()
-  })
+      debouncedFn()
+    })
+  }
   const debouncedFn = useDebounceFn(() => {
 
     emits("change", component.values)

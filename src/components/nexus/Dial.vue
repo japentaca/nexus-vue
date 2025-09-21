@@ -58,12 +58,18 @@ onMounted(async () => {
 
   })
 
-  component.resize(props.size[0], props.size[1])
+  // Verificar si el componente tiene el método resize antes de llamarlo
+  if (component.resize && typeof component.resize === 'function') {
+    component.resize(props.size[0], props.size[1])
+  }
   await nextTick()
   component.value = props.value
-  component.on("change", (value) => {
-    debouncedFn()
-  })
+  // Verificar si el componente tiene el método on antes de llamarlo
+  if (component.on && typeof component.on === 'function') {
+    component.on("change", (value) => {
+      debouncedFn()
+    })
+  }
   const debouncedFn = useDebounceFn(() => {
     //console.log("change", dial.value)
     emits("change", component.value)
