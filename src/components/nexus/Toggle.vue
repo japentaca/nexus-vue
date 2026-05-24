@@ -1,16 +1,17 @@
 // basic vue component
 
 <template>
-  <div id="wrapper">
+  <div ref="wrapper">
   </div>
 </template>
 
 <script setup>
 import Nexus from 'nexusui'
-import { onMounted, defineProps, defineEmits, nextTick } from 'vue'
+import { onMounted, onUnmounted, ref, nextTick } from 'vue'
 
 const emits = defineEmits(["change"])
-let toggle
+const wrapper = ref(null)
+let toggle = null
 const props = defineProps({
 
   state: {
@@ -20,34 +21,49 @@ const props = defineProps({
 
   size: {
     type: Array,
-    default: [75, 75]
+    default: () => [75, 75]
   }
 
 })
 function flip() {
-  toggle.turnOff()
+  if (toggle) {
+    toggle.turnOff()
+  }
 }
 function turnOn() {
-  toggle.turnOn()
+  if (toggle) {
+    toggle.turnOn()
+  }
 }
 //const dial = ref(null)
 onMounted(async () => {
+  if (!wrapper.value) {
+    return
+  }
 
 
-  toggle = new Nexus.Toggle("#wrapper", {
+  toggle = new Nexus.Toggle(wrapper.value, {
     state: props.state,
-    size: props.size,
+    size: props.size
 
   })
 
   toggle.resize(props.size[0], props.size[1])
   await nextTick()
-  toggle.value = props.value
   toggle.on("change", (value) => {
     emits("change", value)
   })
 })
+
+onUnmounted(() => {
+  if (toggle && typeof toggle.destroy === 'function') {
+    toggle.destroy()
+  }
+})
+
 defineExpose({
-  flip
+  flip,
+  turnOn
 })
 </script>
+

@@ -1,13 +1,15 @@
 <template>
-  <div id="wrapper"></div>
+  <div ref="wrapper"></div>
 </template>
 
 <script setup>
   import Nexus from 'nexusui'
-  import { onMounted, defineProps, defineEmits, nextTick } from 'vue'
+  import { onMounted, onUnmounted, ref, nextTick } from 'vue'
   import { useDebounceFn } from '@vueuse/core'
 
   const emits = defineEmits(["change"])
+  const wrapper = ref(null)
+  let component = null
 
   const props = defineProps({
     size: {
@@ -37,7 +39,11 @@
   })
 
   onMounted(async () => {
-    const component = new Nexus.Pan("#wrapper", {
+    if (!wrapper.value) {
+      return
+    }
+
+    component = new Nexus.Pan(wrapper.value, {
       size: props.size,
       mode: props.mode,
       min: props.min,
@@ -63,5 +69,11 @@
     const debouncedFn = useDebounceFn((value) => {
       emits("change", value)
     }, 50)
+  })
+
+  onUnmounted(() => {
+    if (component && typeof component.destroy === 'function') {
+      component.destroy()
+    }
   })
 </script>

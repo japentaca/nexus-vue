@@ -1,17 +1,18 @@
 // basic vue component
 
 <template>
-  <div id="wrapper">
+  <div ref="wrapper">
 
   </div>
 </template>
 
 <script setup>
 import Nexus from 'nexusui'
-import { onMounted, defineProps, defineEmits, nextTick } from 'vue'
+import { onMounted, onUnmounted, ref, nextTick } from 'vue'
 
 const emits = defineEmits(["change"])
-let button
+const wrapper = ref(null)
+let button = null
 const props = defineProps({
   mode: {
     type: String, //  "button", "aftertouch", "impulse", or "toggle"
@@ -24,36 +25,49 @@ const props = defineProps({
 
   size: {
     type: Array,
-    default: [75, 75]
+    default: () => [75, 75]
   }
 
 })
 function turnOff() {
-  button.turnOff()
+  if (button) {
+    button.turnOff()
+  }
 }
 function turnOn() {
-  button.turnOn()
+  if (button) {
+    button.turnOn()
+  }
 }
 //const dial = ref(null)
 onMounted(async () => {
+  if (!wrapper.value) {
+    return
+  }
 
-  button = new Nexus.Button("#wrapper", {
+  button = new Nexus.Button(wrapper.value, {
     state: props.state,
     mode: props.mode,
-    size: props.size,
-    mode: props.mode
+    size: props.size
 
   })
 
   button.resize(props.size[0], props.size[1])
   await nextTick()
-  button.value = props.value
   button.on("change", (value) => {
     emits("change", value)
   })
 })
+
+onUnmounted(() => {
+  if (button && typeof button.destroy === 'function') {
+    button.destroy()
+  }
+})
+
 defineExpose({
   turnOff,
   turnOn
 })
 </script>
+

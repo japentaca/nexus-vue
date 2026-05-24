@@ -1,13 +1,15 @@
 <template>
-  <div id="wrapper"></div>
+  <div ref="wrapper"></div>
 </template>
 
 <script setup>
   import Nexus from 'nexusui'
-  import { onMounted, defineProps, defineEmits, nextTick } from 'vue'
+  import { onMounted, onUnmounted, ref, nextTick } from 'vue'
   import { useDebounceFn } from '@vueuse/core'
 
   const emits = defineEmits(["change"])
+  const wrapper = ref(null)
+  let component = null
 
   const props = defineProps({
     size: {
@@ -25,7 +27,11 @@
   })
 
   onMounted(async () => {
-    const component = new Nexus.Radio("#wrapper", {
+    if (!wrapper.value) {
+      return
+    }
+
+    component = new Nexus.Radio(wrapper.value, {
       size: props.size,
       numberOfButtons: props.numberOfButtons,
       active: props.active
@@ -48,5 +54,11 @@
     const debouncedFn = useDebounceFn((value) => {
       emits("change", value)
     }, 50)
+  })
+
+  onUnmounted(() => {
+    if (component && typeof component.destroy === 'function') {
+      component.destroy()
+    }
   })
 </script>

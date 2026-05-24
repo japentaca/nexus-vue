@@ -1,13 +1,15 @@
 <template>
-  <div id="wrapper"></div>
+  <div ref="wrapper"></div>
 </template>
 
 <script setup>
   import Nexus from 'nexusui'
-  import { onMounted, defineProps, defineEmits, nextTick } from 'vue'
+  import { onMounted, onUnmounted, ref, nextTick } from 'vue'
   import { useDebounceFn } from '@vueuse/core'
 
   const emits = defineEmits(["change", "step"])
+  const wrapper = ref(null)
+  let component = null
 
   const props = defineProps({
     size: {
@@ -29,7 +31,11 @@
   })
 
   onMounted(async () => {
-    const component = new Nexus.Sequencer("#wrapper", {
+    if (!wrapper.value) {
+      return
+    }
+
+    component = new Nexus.Sequencer(wrapper.value, {
       size: props.size,
       mode: props.mode,
       rows: props.rows,
@@ -61,5 +67,11 @@
     const debouncedStep = useDebounceFn((value) => {
       emits("step", value)
     }, 50)
+  })
+
+  onUnmounted(() => {
+    if (component && typeof component.destroy === 'function') {
+      component.destroy()
+    }
   })
 </script>

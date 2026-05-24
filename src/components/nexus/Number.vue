@@ -1,13 +1,15 @@
 <template>
-  <div id="wrapper"></div>
+  <div ref="wrapper"></div>
 </template>
 
 <script setup>
   import Nexus from 'nexusui'
-  import { onMounted, defineProps, defineEmits, nextTick } from 'vue'
+  import { onMounted, onUnmounted, ref, watch, nextTick } from 'vue'
   import { useDebounceFn } from '@vueuse/core'
 
-  const emits = defineEmits(["change"])
+  const emits = defineEmits(["change", "update:modelValue"])
+  const wrapper = ref(null)
+  let component = null
 
   const props = defineProps({
     size: {
@@ -17,6 +19,10 @@
     value: {
       type: Number,
       default: 0
+    },
+    modelValue: {
+      type: Number,
+      default: undefined
     },
     min: {
       type: Number,
@@ -33,9 +39,13 @@
   })
 
   onMounted(async () => {
-    const component = new Nexus.Number("#wrapper", {
+    if (!wrapper.value) {
+      return
+    }
+
+    component = new Nexus.Number(wrapper.value, {
       size: props.size,
-      value: props.value,
+      value: props.modelValue ?? props.value,
       min: props.min,
       max: props.max,
       step: props.step
@@ -57,6 +67,23 @@
 
     const debouncedFn = useDebounceFn((value) => {
       emits("change", value)
+      emits("update:modelValue", value)
     }, 50)
+  })
+
+  watch(() => props.modelValue, (value) => {
+    if (!component || typeof value !== 'number') {
+      return
+    }
+
+    if (component.value !== value) {
+      component.value = value
+    }
+  })
+
+  onUnmounted(() => {
+    if (component && typeof component.destroy === 'function') {
+      component.destroy()
+    }
   })
 </script>

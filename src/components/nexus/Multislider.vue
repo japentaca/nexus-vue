@@ -1,20 +1,22 @@
 <template>
-  <div id="wrapper">
+  <div ref="wrapper">
   </div>
 
 </template>
 
 <script setup>
 import Nexus from 'nexusui'
-import { onMounted, defineProps, defineEmits, nextTick } from 'vue'
+import { onMounted, onUnmounted, ref, nextTick } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 
 const emits = defineEmits(["change"])
+const wrapper = ref(null)
+let component = null
 
 const props = defineProps({
   values: {
     type: Array,
-    default: [0, 0, 0, 0, 0]
+    default: () => [0, 0, 0, 0, 0]
   },
   numberOfSliders: {
     type: Number,
@@ -40,14 +42,17 @@ const props = defineProps({
   ,
   size: {
     type: Array,
-    default: [75, 75]
+    default: () => [75, 75]
   }
 })
 //const dial = ref(null)
 onMounted(async () => {
+  if (!wrapper.value) {
+    return
+  }
 
 
-  let component = new Nexus.Multislider("#wrapper", {
+  component = new Nexus.Multislider(wrapper.value, {
 
     numberOfSliders: props.numberOfSliders,
     min: props.min,
@@ -78,4 +83,11 @@ onMounted(async () => {
   }, 50)
 
 })
+
+onUnmounted(() => {
+  if (component && typeof component.destroy === 'function') {
+    component.destroy()
+  }
+})
 </script>
+
