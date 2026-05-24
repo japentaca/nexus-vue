@@ -1,6 +1,6 @@
 {
   "name": "@japentaca/nexus-vue",
-  "version": "1.0.1-rc.1",
+  "version": "1.0.1",
   "description": "Vue.js components for NexusUI audio interfaces",
   "main": "dist/nexus-vue.umd.js",
   "module": "dist/nexus-vue.es.js",

@@ -76,6 +76,12 @@ function onChange(value) {
 
 Detailed props/events reference: `docs/components.md`.
 
+## Migration For AI Agents
+
+- Agent quick instructions: `AGENTS.md`
+- Strict SOP checklist: `docs/agent-migration-sop.md`
+- Full migration playbook (NexusUI classic -> Vue): `docs/agent-migration-playbook.md`
+
 ## Local Development
 
 ```bash
